@@ -8,14 +8,23 @@ const server = http.createServer((req, res) => {
     if (url === '/') {
         res.write('<html>');
         res.write('<head><title>My First Page</title></head>');
-        res.write('<body><form action="message" method="POST"><input type="text" name="message"><button>Send</button></input></form></body>');
+        res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button>Send</button></input></form></body>');
         res.write('</html>');
         return res.end();
     }
 
     if (url === '/message' && method === 'POST') {
-        // create a new file
-        fs.writeFileSync('message.txt', 'YOU CREATED THIS FILE AND GOT REDIRECTED');
+        const body = []
+        req.on('data', (chunk) => {
+            body.push(chunk);
+        });
+        req.on('end', () => {
+            const parsedBody = Buffer.concat(body).toString();
+            const message = parsedBody.split('=')[1];
+            // create a new file
+            fs.writeFileSync('message.txt', message);
+
+        });
         res.statusCode = 302;
         // redirect to '/' route
         res.setHeader('Location', '/');
