@@ -5,8 +5,10 @@ const express = require('express');
 
 const app = express();
 
-const server = http.createServer(app);
+app.use((req, res, next) => {
+    res.send('<h1>Hello from Express</h1>');
+});
 
 const port = 3000
 // const hostName = 'localhost'
-server.listen(port);
+app.listen(port);
